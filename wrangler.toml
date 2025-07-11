@@ -1,0 +1,8 @@
+name = "survey-builder-worker"
+main = "worker.js"
+compatibility_date = "2024-06-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "survey-builder-db"
+database_id = "d56e9bf6-fdea-47bd-823e-07b40a5c3917" 
