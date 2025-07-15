@@ -1,16 +1,6 @@
 // Survey API Service
 // Uses VITE_API_URL from environment variables
 
-// Debug: Log the environment variable value
-console.log('=== ENVIRONMENT VARIABLE DEBUG ===');
-console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('Type of VITE_API_URL:', typeof import.meta.env.VITE_API_URL);
-console.log('Is VITE_API_URL undefined?', import.meta.env.VITE_API_URL === undefined);
-console.log('Is VITE_API_URL null?', import.meta.env.VITE_API_URL === null);
-console.log('Is VITE_API_URL empty string?', import.meta.env.VITE_API_URL === '');
-console.log('All environment variables:', import.meta.env);
-console.log('================================');
-
 // Use environment variable or throw error if not set
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -19,8 +9,6 @@ if (!API_BASE_URL) {
   console.error('Expected: VITE_API_URL=https://survey-builder-worker.divya-vijayakumar.workers.dev');
   throw new Error('VITE_API_URL environment variable is not set. Please check your .env file.');
 }
-
-console.log('✅ Using API_BASE_URL:', API_BASE_URL);
 
 // Helper function to handle API responses
 const handleResponse = async (response) => {

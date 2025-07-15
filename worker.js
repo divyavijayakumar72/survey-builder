@@ -106,6 +106,28 @@ export default {
       });
     }
 
+    // GET /test-db - List all tables in the database
+    if (method === 'GET' && pathname === '/test-db') {
+      try {
+        const { results } = await DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
+        const tableNames = results.map(row => row.name);
+        return json({
+          success: true,
+          message: 'Database tables retrieved successfully',
+          data: {
+            tables: tableNames,
+            count: tableNames.length,
+          },
+        });
+      } catch (error) {
+        return json({ 
+          success: false, 
+          message: 'Internal server error while retrieving database tables',
+          error: error.message 
+        }, 500);
+      }
+    }
+
     // GET /api/surveys
     if (method === 'GET' && pathname === '/api/surveys') {
       try {
@@ -245,6 +267,28 @@ export default {
         });
       } catch (error) {
         return json({ success: false, message: 'Internal server error while updating survey' }, 500);
+      }
+    }
+
+    // DELETE /api/surveys/:id
+    if (method === 'DELETE' && surveyIdMatch) {
+      const surveyId = surveyIdMatch[1];
+      try {
+        const { results } = await DB.prepare('SELECT * FROM surveys WHERE id = ?').bind(surveyId).all();
+        if (!results.length) {
+          return json({ success: false, message: 'Survey not found' }, 404);
+        }
+        await DB.prepare('DELETE FROM surveys WHERE id = ?').bind(surveyId).run();
+        return json({
+          success: true,
+          message: 'Survey deleted successfully',
+          data: {
+            id: surveyId,
+            title: results[0].title,
+          },
+        });
+      } catch (error) {
+        return json({ success: false, message: 'Internal server error while deleting survey' }, 500);
       }
     }
 
