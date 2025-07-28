@@ -8,6 +8,8 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
+
+
 .preview-header {
   display: flex;
   justify-content: space-between;
@@ -31,6 +33,10 @@
   background: #f8f9fa;
   border-radius: 8px;
   border: 1px solid #e1e5e9;
+  width: 100%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .survey-title-section h1 {
@@ -38,6 +44,37 @@
   color: #2c3e50;
   font-size: 2rem;
   font-weight: 600;
+}
+
+.title-with-status {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid;
+}
+
+.status-badge.published {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+.status-badge.unpublished {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
 }
 
 .survey-form {
@@ -115,6 +152,27 @@
   box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
+/* Disabled form controls for preview */
+.form-control[readonly],
+.form-control:disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.radio-option input[type="radio"]:disabled,
+.checkbox-option input[type="checkbox"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.radio-option input[type="radio"]:disabled + span,
+.checkbox-option input[type="checkbox"]:disabled + span {
+  color: #6c757d;
+}
+
+/* Form Actions */
 .form-actions {
   display: flex;
   gap: 15px;
@@ -127,6 +185,8 @@
 .form-actions .btn {
   min-width: 120px;
 }
+
+
 
 .empty-questions {
   text-align: center;
@@ -255,6 +315,18 @@
   
   .survey-title-section h1 {
     font-size: 1.5rem;
+  }
+  
+  .title-with-status {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .status-badge {
+    font-size: 11px;
+    padding: 5px 12px;
   }
   
   .form-actions {

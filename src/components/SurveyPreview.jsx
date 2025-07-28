@@ -27,18 +27,7 @@ const SurveyPreview = () => {
     }
   };
 
-  const handleEditSurvey = () => {
-    navigate('/create', { 
-      state: { 
-        editMode: true, 
-        surveyData: survey 
-      } 
-    });
-  };
 
-  const handleBackToDashboard = () => {
-    navigate('/');
-  };
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -142,7 +131,7 @@ const SurveyPreview = () => {
             <button onClick={fetchSurvey} className="btn btn-primary">
               Try Again
             </button>
-            <button onClick={handleBackToDashboard} className="btn btn-secondary">
+            <button onClick={() => navigate('/')} className="btn btn-secondary">
               Back to Dashboard
             </button>
           </div>
@@ -157,7 +146,7 @@ const SurveyPreview = () => {
         <div className="error-state">
           <h2>Survey Not Found</h2>
           <p>The survey you're looking for doesn't exist.</p>
-          <button onClick={handleBackToDashboard} className="btn btn-primary">
+          <button onClick={() => navigate('/')} className="btn btn-primary">
             Back to Dashboard
           </button>
         </div>
@@ -168,17 +157,27 @@ const SurveyPreview = () => {
   return (
     <div className="preview-container">
       <div className="preview-header">
-        <button onClick={handleBackToDashboard} className="btn btn-secondary">
+        <button onClick={() => navigate('/')} className="btn btn-secondary">
           Back to Dashboard
         </button>
-        <button onClick={handleEditSurvey} className="btn btn-warning">
+        <button onClick={() => navigate('/create', { 
+          state: { 
+            editMode: true, 
+            surveyData: survey 
+          } 
+        })} className="btn btn-warning">
           Edit Survey
         </button>
       </div>
 
       <div className="preview-content">
         <div className="survey-title-section">
-          <h1>{survey.title}</h1>
+          <div className="title-with-status">
+            <h1>{survey.title}</h1>
+            <span className={`status-badge ${survey.submitted ? 'published' : 'unpublished'}`}>
+              {survey.submitted ? 'PUBLISHED' : 'DRAFT'}
+            </span>
+          </div>
         </div>
 
         {survey.questions.length === 0 ? (
@@ -186,7 +185,7 @@ const SurveyPreview = () => {
             <p>No questions found in this survey.</p>
           </div>
         ) : (
-          <form className="survey-form" onSubmit={handleSubmit}>
+          <div className="survey-form">
             {survey.questions.map((question, index) => (
               <div key={index} className="preview-question">
                 <label className="question-label">
@@ -199,12 +198,13 @@ const SurveyPreview = () => {
                     placeholder="Enter your answer here..."
                     className="form-control"
                     rows="3"
+                    readOnly
                   />
                 ) : question.type === 'single-select' ? (
                   <div className="radio-group">
                     {question.options.map((option, optIndex) => (
                       <label key={optIndex} className="radio-option">
-                        <input type="radio" name={`question-${index}`} />
+                        <input type="radio" name={`question-${index}`} disabled />
                         {option}
                       </label>
                     ))}
@@ -213,7 +213,7 @@ const SurveyPreview = () => {
                   <div className="checkbox-group">
                     {question.options.map((option, optIndex) => (
                       <label key={optIndex} className="checkbox-option">
-                        <input type="checkbox" name={`question-${index}`} />
+                        <input type="checkbox" name={`question-${index}`} disabled />
                         {option}
                       </label>
                     ))}
@@ -225,11 +225,11 @@ const SurveyPreview = () => {
               <button type="button" onClick={handleSave} className="btn btn-secondary">
                 Save as Draft
               </button>
-              <button type="submit" className="btn btn-primary">
+              <button type="button" onClick={handleSubmit} className="btn btn-primary">
                 Submit Survey
               </button>
             </div>
-          </form>
+          </div>
         )}
       </div>
     </div>

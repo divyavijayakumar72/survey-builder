@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SurveyDashboard from './components/SurveyDashboard';
 import CreateSurvey from './components/CreateSurvey';
 import SurveyPreview from './components/SurveyPreview';
+import TakeSurvey from './components/TakeSurvey';
+import ResponsesDashboard from './components/ResponsesDashboard';
+import RecipientDetails from './components/RecipientDetails';
 import './App.css';
 
 function App() {
@@ -12,6 +15,10 @@ function App() {
           <Route path="/" element={<SurveyDashboard />} />
           <Route path="/create" element={<CreateSurvey />} />
           <Route path="/survey/:surveyId" element={<SurveyPreview />} />
+          <Route path="/take/:surveyId" element={<TakeSurvey />} />
+          <Route path="/responses" element={<ResponsesDashboard />} />
+          <Route path="/responses/survey/:surveyId" element={<ResponsesDashboard />} />
+          <Route path="/responses/recipient/:recipientName" element={<RecipientDetails />} />
         </Routes>
       </div>
     </Router>

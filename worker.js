@@ -13,6 +13,15 @@
  *   submitted INTEGER DEFAULT 0,
  *   submittedAt TEXT
  * );
+ *
+ * CREATE TABLE IF NOT EXISTS survey_responses (
+ *   id TEXT PRIMARY KEY,
+ *   surveyId TEXT NOT NULL,
+ *   respondentName TEXT NOT NULL,
+ *   responses TEXT NOT NULL, -- JSON string
+ *   submittedAt TEXT NOT NULL,
+ *   FOREIGN KEY (surveyId) REFERENCES surveys(id) ON DELETE CASCADE
+ * );
  */
 
 export default {
@@ -111,12 +120,29 @@ export default {
       try {
         const { results } = await DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();
         const tableNames = results.map(row => row.name);
+        
+        // Check if survey_responses table exists and has data
+        let responseCount = 0;
+        let surveyCount = 0;
+        
+        if (tableNames.includes('survey_responses')) {
+          const responseResult = await DB.prepare("SELECT COUNT(*) as count FROM survey_responses").all();
+          responseCount = responseResult.results[0].count;
+        }
+        
+        if (tableNames.includes('surveys')) {
+          const surveyResult = await DB.prepare("SELECT COUNT(*) as count FROM surveys").all();
+          surveyCount = surveyResult.results[0].count;
+        }
+        
         return json({
           success: true,
           message: 'Database tables retrieved successfully',
           data: {
             tables: tableNames,
             count: tableNames.length,
+            survey_responses_count: responseCount,
+            surveys_count: surveyCount,
           },
         });
       } catch (error) {
@@ -128,10 +154,106 @@ export default {
       }
     }
 
+    // POST /test-add-responses - Add sample responses for testing
+    if (method === 'POST' && pathname === '/test-add-responses') {
+      try {
+        // Get the first survey to add responses to
+        const { results: surveys } = await DB.prepare('SELECT id, title FROM surveys LIMIT 1').all();
+        
+        if (!surveys.length) {
+          return json({ success: false, message: 'No surveys found to add responses to' }, 404);
+        }
+        
+        const surveyId = surveys[0].id;
+        const surveyTitle = surveys[0].title;
+        
+        // Add 3 sample responses
+        const sampleResponses = [
+          {
+            respondentName: 'John Doe',
+            responses: [
+              { questionId: 0, answer: 'Sample answer 1' },
+              { questionId: 1, answer: 'Sample answer 2' }
+            ]
+          },
+          {
+            respondentName: 'Jane Smith',
+            responses: [
+              { questionId: 0, answer: 'Another answer 1' },
+              { questionId: 1, answer: 'Another answer 2' }
+            ]
+          },
+          {
+            respondentName: 'Bob Johnson',
+            responses: [
+              { questionId: 0, answer: 'Third answer 1' },
+              { questionId: 1, answer: 'Third answer 2' }
+            ]
+          }
+        ];
+        
+        for (const response of sampleResponses) {
+          const responseId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+          const now = new Date().toISOString();
+          
+          await DB.prepare(
+            'INSERT INTO survey_responses (id, surveyId, respondentName, responses, submittedAt) VALUES (?, ?, ?, ?, ?)'
+          ).bind(
+            responseId,
+            surveyId,
+            response.respondentName,
+            JSON.stringify(response.responses),
+            now
+          ).run();
+        }
+        
+        return json({
+          success: true,
+          message: 'Sample responses added successfully',
+          data: {
+            surveyId,
+            surveyTitle,
+            responsesAdded: sampleResponses.length,
+          },
+        });
+      } catch (error) {
+        console.error('Error adding sample responses:', error);
+        return json({ 
+          success: false, 
+          message: 'Internal server error while adding sample responses',
+          error: error.message 
+        }, 500);
+      }
+    }
+
     // GET /api/surveys
     if (method === 'GET' && pathname === '/api/surveys') {
       try {
-        const { results } = await DB.prepare('SELECT id, title, questions, createdAt, updatedAt, submitted FROM surveys').all();
+        console.log('Fetching surveys with response counts...');
+        
+        const { results } = await DB.prepare(`
+          SELECT 
+            s.id, 
+            s.title, 
+            s.questions, 
+            s.createdAt, 
+            s.updatedAt, 
+            s.submitted,
+            COALESCE(r.responseCount, 0) as responseCount
+          FROM surveys s
+          LEFT JOIN (
+            SELECT surveyId, COUNT(*) as responseCount
+            FROM survey_responses
+            GROUP BY surveyId
+          ) r ON s.id = r.surveyId
+        `).all();
+        
+        console.log('Survey results:', results.map(s => ({
+          id: s.id,
+          title: s.title,
+          responseCount: s.responseCount
+        })));
+        
         return json({
           success: true,
           message: 'Surveys retrieved successfully',
@@ -140,6 +262,7 @@ export default {
               id: s.id,
               title: s.title,
               questionCount: JSON.parse(s.questions).length,
+              responseCount: s.responseCount,
               createdAt: s.createdAt,
               updatedAt: s.updatedAt || s.createdAt,
               submitted: !!s.submitted,
@@ -148,6 +271,7 @@ export default {
           },
         });
       } catch (error) {
+        console.error('Error fetching surveys:', error);
         return json({ success: false, message: 'Internal server error while retrieving surveys' }, 500);
       }
     }
@@ -292,25 +416,113 @@ export default {
       }
     }
 
-    // DELETE /api/surveys/:id
-    if (method === 'DELETE' && surveyIdMatch) {
-      const surveyId = surveyIdMatch[1];
+    // POST /api/surveys/responses - Submit a survey response
+    if (method === 'POST' && pathname === '/api/surveys/responses') {
       try {
-        const { results } = await DB.prepare('SELECT * FROM surveys WHERE id = ?').bind(surveyId).all();
-        if (!results.length) {
+        console.log('Received survey response submission request');
+        
+        const responseData = await parseBody(request);
+        console.log('Parsed request body:', responseData);
+        
+        // Validate required fields
+        if (!responseData) {
+          console.error('No request body provided');
+          return json({ success: false, message: 'Request body is required' }, 400);
+        }
+        
+        if (!responseData.surveyId) {
+          console.error('Missing surveyId');
+          return json({ success: false, message: 'surveyId is required' }, 400);
+        }
+        
+        if (!responseData.respondentName || responseData.respondentName.trim() === '') {
+          console.error('Missing or empty respondentName');
+          return json({ success: false, message: 'respondentName is required' }, 400);
+        }
+        
+        if (!responseData.responses || !Array.isArray(responseData.responses)) {
+          console.error('Missing or invalid responses array');
+          return json({ success: false, message: 'responses array is required' }, 400);
+        }
+        
+        // Verify survey exists
+        console.log('Checking if survey exists:', responseData.surveyId);
+        const { results: surveyResults } = await DB.prepare('SELECT * FROM surveys WHERE id = ?').bind(responseData.surveyId).all();
+        
+        if (!surveyResults.length) {
+          console.error('Survey not found:', responseData.surveyId);
           return json({ success: false, message: 'Survey not found' }, 404);
         }
-        await DB.prepare('DELETE FROM surveys WHERE id = ?').bind(surveyId).run();
+        
+        console.log('Survey found, creating response record');
+        
+        const responseId = Date.now().toString();
+        const now = new Date().toISOString();
+        
+        const insertResult = await DB.prepare(
+          'INSERT INTO survey_responses (id, surveyId, respondentName, responses, submittedAt) VALUES (?, ?, ?, ?, ?)'
+        ).bind(
+          responseId,
+          responseData.surveyId,
+          responseData.respondentName.trim(),
+          JSON.stringify(responseData.responses),
+          now
+        ).run();
+        
+        console.log('Response inserted successfully:', insertResult);
+        
         return json({
           success: true,
-          message: 'Survey deleted successfully',
+          message: 'Survey response submitted successfully',
           data: {
-            id: surveyId,
-            title: results[0].title,
+            id: responseId,
+            surveyId: responseData.surveyId,
+            respondentName: responseData.respondentName,
+            submittedAt: now,
+          },
+        }, 201);
+      } catch (error) {
+        console.error('Error submitting survey response:', error);
+        return json({ 
+          success: false, 
+          message: 'Internal server error while submitting response',
+          error: error.message 
+        }, 500);
+      }
+    }
+
+    // GET /api/surveys/:id/responses - Get responses for a survey
+    const responsesMatch = pathname.match(/^\/api\/surveys\/([^\/]+)\/responses$/);
+    if (method === 'GET' && responsesMatch) {
+      const surveyId = responsesMatch[1];
+      try {
+        // Verify survey exists
+        const { results: surveyResults } = await DB.prepare('SELECT * FROM surveys WHERE id = ?').bind(surveyId).all();
+        if (!surveyResults.length) {
+          return json({ success: false, message: 'Survey not found' }, 404);
+        }
+        
+        const { results } = await DB.prepare('SELECT * FROM survey_responses WHERE surveyId = ? ORDER BY submittedAt DESC').bind(surveyId).all();
+        
+        const responses = results.map(r => ({
+          id: r.id,
+          surveyId: r.surveyId,
+          respondentName: r.respondentName,
+          responses: JSON.parse(r.responses),
+          submittedAt: r.submittedAt,
+        }));
+        
+        return json({
+          success: true,
+          message: 'Survey responses retrieved successfully',
+          data: {
+            surveyId,
+            responses,
+            total: responses.length,
           },
         });
       } catch (error) {
-        return json({ success: false, message: 'Internal server error while deleting survey' }, 500);
+        return json({ success: false, message: 'Internal server error while retrieving responses' }, 500);
       }
     }
 

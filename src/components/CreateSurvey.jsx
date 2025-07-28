@@ -13,6 +13,9 @@ const CreateSurvey = () => {
   const [surveyTitle, setSurveyTitle] = useState('My Survey');
   const [isEditMode, setIsEditMode] = useState(false);
   const [surveyId, setSurveyId] = useState(null);
+  const [originalSurveyData, setOriginalSurveyData] = useState(null);
+  const [hasResponses, setHasResponses] = useState(false);
+  const [lockedQuestionIds, setLockedQuestionIds] = useState(new Set());
   const [newQuestion, setNewQuestion] = useState({
     type: 'multiple-choice',
     label: '',
@@ -35,6 +38,7 @@ const CreateSurvey = () => {
       setIsEditMode(true);
       setSurveyId(surveyData.id);
       setSurveyTitle(surveyData.title);
+      setOriginalSurveyData(surveyData);
       
       // Convert API format to component format
       const convertedQuestions = surveyData.questions.map(q => ({
@@ -46,6 +50,9 @@ const CreateSurvey = () => {
       }));
       
       setQuestions(convertedQuestions);
+      
+      // Check if survey has responses and set up locked questions
+      checkSurveyResponses(surveyData.id);
     }
   }, [location.state]);
 
@@ -185,7 +192,7 @@ const CreateSurvey = () => {
       return;
     }
 
-    // Prepare survey data for API
+    // Prepare survey data for API - explicitly set as draft/unpublished
     const surveyData = {
       title: surveyTitle,
       questions: questions.map(q => ({
@@ -193,7 +200,8 @@ const CreateSurvey = () => {
         type: q.type,
         options: q.type === 'free-text' ? [] : q.options,
         required: q.required
-      }))
+      })),
+      submitted: false // Explicitly ensure survey remains unpublished
     };
 
     try {
@@ -224,7 +232,7 @@ const CreateSurvey = () => {
       return;
     }
 
-    // Prepare survey data for API
+    // Prepare survey data for API - explicitly set as draft/unpublished
     const surveyData = {
       title: surveyTitle,
       questions: questions.map(q => ({
@@ -232,8 +240,14 @@ const CreateSurvey = () => {
         type: q.type,
         options: q.type === 'free-text' ? [] : q.options,
         required: q.required
-      }))
+      })),
+      submitted: false // Explicitly ensure survey remains unpublished
     };
+
+    // If editing a published survey, ensure it's marked as draft
+    if (isEditMode && originalSurveyData?.submitted) {
+      surveyData.submitted = false;
+    }
 
     try {
       let result;
@@ -263,7 +277,7 @@ const CreateSurvey = () => {
       return;
     }
 
-    // Prepare survey data for API
+    // Prepare survey data for API - explicitly set as draft before submitting
     const surveyData = {
       title: surveyTitle,
       questions: questions.map(q => ({
@@ -271,7 +285,8 @@ const CreateSurvey = () => {
         type: q.type,
         options: q.type === 'free-text' ? [] : q.options,
         required: q.required
-      }))
+      })),
+      submitted: false // Explicitly ensure survey is unpublished before submitting
     };
 
     try {
@@ -295,6 +310,31 @@ const CreateSurvey = () => {
       console.error('Network error:', error);
       alert(`Error submitting survey: ${error.message}`);
     }
+  };
+
+  const checkSurveyResponses = async (surveyId) => {
+    try {
+      const responsesResult = await surveyService.getSurveyResponses(surveyId);
+      const responses = responsesResult.data.responses || [];
+      
+      if (responses.length > 0) {
+        setHasResponses(true);
+        // Lock all existing questions (original questions from the survey)
+        const originalQuestionIds = new Set();
+        originalSurveyData?.questions.forEach((_, index) => {
+          originalQuestionIds.add(index);
+        });
+        setLockedQuestionIds(originalQuestionIds);
+      }
+    } catch (error) {
+      console.error('Error checking survey responses:', error);
+      // If we can't check responses, assume no responses for safety
+      setHasResponses(false);
+    }
+  };
+
+  const isQuestionLocked = (questionIndex) => {
+    return hasResponses && lockedQuestionIds.has(questionIndex);
   };
 
   const handleBackToDashboard = () => {
@@ -402,24 +442,36 @@ const CreateSurvey = () => {
   const renderQuestionEditor = (question) => {
     const isEditing = editingQuestion === question.id;
     const isChoiceType = question.type === 'multiple-choice' || question.type === 'single-select';
+    const questionIndex = questions.indexOf(question);
+    const isLocked = isQuestionLocked(questionIndex);
 
     return (
-      <div key={question.id} className="question-card">
+      <div key={question.id} className={`question-card ${isLocked ? 'locked' : ''}`}>
         <div className="question-header">
-          <h3>Question {questions.indexOf(question) + 1}</h3>
+          <h3>
+            Question {questionIndex + 1}
+            {isLocked && <span className="lock-icon">🔒</span>}
+          </h3>
           <div className="question-actions">
-            <button 
-              onClick={() => toggleEdit(question.id)}
-              className="btn btn-warning"
-            >
-              {isEditing ? 'Save' : 'Edit'}
-            </button>
-            <button 
-              onClick={() => deleteQuestion(question.id)}
-              className="btn btn-danger"
-            >
-              Delete
-            </button>
+            {!isLocked && (
+              <button 
+                onClick={() => toggleEdit(question.id)}
+                className="btn btn-warning"
+              >
+                {isEditing ? 'Save' : 'Edit'}
+              </button>
+            )}
+            {!isLocked && (
+              <button 
+                onClick={() => deleteQuestion(question.id)}
+                className="btn btn-danger"
+              >
+                Delete
+              </button>
+            )}
+            {isLocked && (
+              <span className="locked-message">Locked (has responses)</span>
+            )}
           </div>
         </div>
 
@@ -430,7 +482,8 @@ const CreateSurvey = () => {
               <select
                 value={question.type}
                 onChange={(e) => updateQuestion(question.id, 'type', e.target.value)}
-                className="form-control"
+                className={`form-control ${isLocked ? 'disabled' : ''}`}
+                disabled={isLocked}
               >
                 {questionTypes.map(type => (
                   <option key={type.value} value={type.value}>
@@ -447,7 +500,8 @@ const CreateSurvey = () => {
                 value={question.label}
                 onChange={(e) => updateQuestion(question.id, 'label', e.target.value)}
                 placeholder="Enter your question here..."
-                className="form-control"
+                className={`form-control ${isLocked ? 'disabled' : ''}`}
+                disabled={isLocked}
               />
             </div>
 
@@ -457,6 +511,7 @@ const CreateSurvey = () => {
                   type="checkbox"
                   checked={question.required}
                   onChange={(e) => updateQuestion(question.id, 'required', e.target.checked)}
+                  disabled={isLocked}
                 />
                 Required
               </label>
@@ -472,9 +527,10 @@ const CreateSurvey = () => {
                       value={option}
                       onChange={(e) => updateOption(question.id, index, e.target.value)}
                       placeholder={`Option ${index + 1}`}
-                      className="form-control"
+                      className={`form-control ${isLocked ? 'disabled' : ''}`}
+                      disabled={isLocked}
                     />
-                    {question.options.length > 1 && (
+                    {question.options.length > 1 && !isLocked && (
                       <button
                         onClick={() => removeOption(question.id, index)}
                         className="btn btn-danger btn-sm"
@@ -484,12 +540,14 @@ const CreateSurvey = () => {
                     )}
                   </div>
                 ))}
-                <button
-                  onClick={() => addOption(question.id)}
-                  className="btn btn-success"
-                >
-                  Add Option
-                </button>
+                {!isLocked && (
+                  <button
+                    onClick={() => addOption(question.id)}
+                    className="btn btn-success"
+                  >
+                    Add Option
+                  </button>
+                )}
               </div>
             )}
           </div>

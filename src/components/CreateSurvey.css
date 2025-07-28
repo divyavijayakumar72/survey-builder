@@ -218,6 +218,41 @@
 .question-actions {
   display: flex;
   gap: 8px;
+  align-items: center;
+}
+
+/* Locked Question Styles */
+.question-card.locked {
+  border: 2px solid #e74c3c;
+  background-color: #fdf2f2;
+}
+
+.lock-icon {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #e74c3c;
+}
+
+.locked-message {
+  color: #e74c3c;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  background-color: #fdf2f2;
+  border: 1px solid #e74c3c;
+  border-radius: 4px;
+}
+
+.form-control.disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.form-control.disabled:focus {
+  border-color: #ddd;
+  box-shadow: none;
 }
 
 /* Form Controls */

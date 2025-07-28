@@ -1,0 +1,254 @@
+.take-survey-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.name-form,
+.survey-form,
+.thank-you-state,
+.loading-state,
+.error-state {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.name-form h2,
+.survey-form h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.name-form p {
+  color: #6c757d;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+}
+
+.name-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  transition: border-color 0.2s ease;
+}
+
+.name-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.respondent-name {
+  color: #6c757d;
+  font-style: italic;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.question-container {
+  margin-bottom: 40px;
+  padding: 24px;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+}
+
+.question-text {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.required {
+  color: #dc3545;
+}
+
+.question-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e1e5e9;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+}
+
+.option-label:hover {
+  background-color: #f8f9fa;
+  border-color: #667eea;
+}
+
+.option-label input[type="radio"],
+.option-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #667eea;
+}
+
+.option-text {
+  font-size: 16px;
+  color: #2c3e50;
+}
+
+.text-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid #e1e5e9;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+}
+
+.btn-primary {
+  background-color: #667eea;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #5a6fd8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.thank-you-state {
+  text-align: center;
+}
+
+.thank-you-state h2 {
+  color: #28a745;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+}
+
+.thank-you-state p {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.loading-state,
+.error-state {
+  text-align: center;
+}
+
+.loading-state .spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-state h2 {
+  color: #dc3545;
+  margin-bottom: 20px;
+}
+
+.error-state p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .take-survey-container {
+    padding: 10px;
+  }
+  
+  .name-form,
+  .survey-form,
+  .thank-you-state,
+  .loading-state,
+  .error-state {
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .name-form h2,
+  .survey-form h2 {
+    font-size: 1.5rem;
+  }
+  
+  .question-container {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .question-text {
+    font-size: 1.1rem;
+  }
+  
+  .option-label {
+    padding: 10px;
+  }
+  
+  .btn {
+    width: 100%;
+    max-width: 200px;
+  }
+} 

@@ -1,13 +1,12 @@
 // Survey API Service
 // Uses VITE_API_URL from environment variables
 
-// Use environment variable or throw error if not set
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+// Use environment variable or fallback to default URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://survey-builder-worker.divya-vijayakumar.workers.dev';
 
-if (!API_BASE_URL) {
-  console.error('❌ VITE_API_URL is not set! Please check your .env file.');
-  console.error('Expected: VITE_API_URL=https://survey-builder-worker.divya-vijayakumar.workers.dev');
-  throw new Error('VITE_API_URL environment variable is not set. Please check your .env file.');
+if (!import.meta.env.VITE_API_URL) {
+  console.warn('⚠️ VITE_API_URL is not set! Using default URL.');
+  console.warn('To set a custom URL, create a .env file with: VITE_API_URL=https://your-worker-url.workers.dev');
 }
 
 // Helper function to handle API responses
@@ -15,7 +14,10 @@ const handleResponse = async (response) => {
   const result = await response.json();
   
   if (!response.ok) {
-    throw new Error(result.message || `HTTP error! status: ${response.status}`);
+    const error = new Error(result.message || `HTTP error! status: ${response.status}`);
+    error.status = response.status;
+    error.response = result;
+    throw error;
   }
   
   return result;
@@ -32,8 +34,25 @@ const apiRequest = async (endpoint, options = {}) => {
     ...options,
   };
 
-  const response = await fetch(url, config);
-  return handleResponse(response);
+  console.log('Making API request:', {
+    url,
+    method: config.method || 'GET',
+    headers: config.headers,
+    body: config.body ? JSON.parse(config.body) : undefined
+  });
+
+  try {
+    const response = await fetch(url, config);
+    console.log('API response status:', response.status);
+    return handleResponse(response);
+  } catch (error) {
+    console.error('API request failed:', {
+      url,
+      error: error.message,
+      config
+    });
+    throw error;
+  }
 };
 
 // Survey API methods
@@ -81,6 +100,19 @@ export const surveyService = {
   // Health check
   async healthCheck() {
     return apiRequest('/api/health');
+  },
+
+  // Submit survey response
+  async submitSurveyResponse(responseData) {
+    return apiRequest('/api/surveys/responses', {
+      method: 'POST',
+      body: JSON.stringify(responseData),
+    });
+  },
+
+  // Get survey responses
+  async getSurveyResponses(surveyId) {
+    return apiRequest(`/api/surveys/${surveyId}/responses`);
   },
 };
 
