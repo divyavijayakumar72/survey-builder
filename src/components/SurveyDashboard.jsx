@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import surveyService from '../services/surveyService';
 import './SurveyDashboard.css';
 
@@ -138,7 +139,7 @@ const SurveyDashboard = () => {
     
     try {
       await navigator.clipboard.writeText(surveyLink);
-      alert('Survey link copied to clipboard!');
+      toast.success('Survey link copied to clipboard!');
     } catch (err) {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
@@ -147,7 +148,7 @@ const SurveyDashboard = () => {
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-      alert('Survey link copied to clipboard!');
+      toast.success('Survey link copied to clipboard!');
     }
     
     setOpenMenuId(null);
@@ -156,6 +157,36 @@ const SurveyDashboard = () => {
   const handleViewResponses = (e, survey) => {
     e.stopPropagation();
     navigate(`/responses/survey/${survey.id}`);
+    setOpenMenuId(null);
+  };
+
+  const handlePublishToggle = async (e, survey) => {
+    e.stopPropagation();
+    
+    try {
+      const newPublishedStatus = !survey.submitted;
+      
+      // Call the new PATCH endpoint
+      await surveyService.updateSurveyStatus(survey.id, newPublishedStatus);
+      
+      // Update the local state
+      setSurveys(prevSurveys => 
+        prevSurveys.map(s => 
+          s.id === survey.id 
+            ? { ...s, submitted: newPublishedStatus }
+            : s
+        )
+      );
+      
+      // Show success toast
+      const message = newPublishedStatus ? 'Survey published successfully' : 'Survey unpublished successfully';
+      toast.success(message);
+      
+    } catch (error) {
+      console.error('Error updating survey status:', error);
+      toast.error('Error updating survey status. Please try again.');
+    }
+    
     setOpenMenuId(null);
   };
 
@@ -310,6 +341,12 @@ const SurveyDashboard = () => {
                                                  {/* Dropdown Menu */}
                          {openMenuId === survey.id && (
                            <div className={`dropdown-menu ${shouldShowDropdownAbove(survey.id) ? 'dropdown-menu-above' : ''}`}>
+                             <button
+                               onClick={(e) => handlePublishToggle(e, survey)}
+                               className="dropdown-item publish-item"
+                             >
+                               {survey.submitted ? 'Unpublish' : 'Publish'}
+                             </button>
                              <button
                                onClick={(e) => handleCopyLink(e, survey)}
                                className={`dropdown-item copy-item ${!survey.submitted ? 'disabled' : ''}`}

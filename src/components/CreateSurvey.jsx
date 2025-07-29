@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import surveyService from '../services/surveyService';
 import './CreateSurvey.css';
 
@@ -188,7 +189,7 @@ const CreateSurvey = () => {
     e.preventDefault();
     
     if (questions.length === 0) {
-      alert('Please add at least one question to your survey before submitting.');
+      toast.error('Please add at least one question to your survey before submitting.');
       return;
     }
 
@@ -214,13 +215,13 @@ const CreateSurvey = () => {
 
       const message = isEditMode ? 'Survey updated successfully!' : 'Survey saved successfully!';
       console.log(message);
-      alert(message);
+      toast.success(message);
       
       // Navigate back to dashboard after successful save/update
       navigate('/');
     } catch (error) {
       console.error('Error saving survey:', error);
-      alert(`Error saving survey: ${error.message}`);
+      toast.error(`Error saving survey: ${error.message}`);
     }
   };
 
@@ -228,7 +229,7 @@ const CreateSurvey = () => {
     e.preventDefault();
     
     if (questions.length === 0) {
-      alert('Please add at least one question to your survey before saving.');
+      toast.error('Please add at least one question to your survey before saving.');
       return;
     }
 
@@ -259,13 +260,13 @@ const CreateSurvey = () => {
 
       const message = isEditMode ? 'Survey updated successfully!' : 'Survey saved as draft successfully!';
       console.log(message);
-      alert(message);
+      toast.success(message);
       
       // Navigate back to dashboard after successful save/update
       navigate('/');
     } catch (error) {
       console.error('Error saving survey:', error);
-      alert(`Error saving survey: ${error.message}`);
+      toast.error(`Error saving survey: ${error.message}`);
     }
   };
 
@@ -273,7 +274,7 @@ const CreateSurvey = () => {
     e.preventDefault();
     
     if (questions.length === 0) {
-      alert('Please add at least one question to your survey before submitting.');
+      toast.error('Please add at least one question to your survey before submitting.');
       return;
     }
 
@@ -303,12 +304,12 @@ const CreateSurvey = () => {
       // Then mark as submitted
       await surveyService.submitSurvey(surveyIdToSubmit);
 
-      alert('Survey submitted successfully!');
+      toast.success('Survey submitted successfully!');
       // Navigate back to dashboard after successful submission
       navigate('/');
     } catch (error) {
       console.error('Network error:', error);
-      alert(`Error submitting survey: ${error.message}`);
+      toast.error(`Error submitting survey: ${error.message}`);
     }
   };
 

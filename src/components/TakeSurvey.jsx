@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import surveyService from '../services/surveyService';
 import './TakeSurvey.css';
 
@@ -57,7 +58,7 @@ const TakeSurvey = () => {
     });
 
     if (missingRequired) {
-      alert('Please answer all required questions.');
+      toast.error('Please answer all required questions.');
       return;
     }
 
@@ -95,14 +96,14 @@ const TakeSurvey = () => {
           errorMessage = 'Survey not found. Please check the survey link.';
         } else if (error.message.includes('400')) {
           errorMessage = 'Invalid survey data. Please check your answers.';
-        } else if (error.message.includes('500')) {
-          errorMessage = 'Server error. Please try again later.';
-        } else if (error.message.includes('Network')) {
-          errorMessage = 'Network error. Please check your connection and try again.';
-        }
+              } else if (error.message.includes('500')) {
+        errorMessage = 'Server error. Please try again later.';
+      } else if (error.message.includes('Network')) {
+        errorMessage = 'Network error. Please check your connection and try again.';
       }
-      
-      alert(errorMessage);
+    }
+    
+    toast.error(errorMessage);
     } finally {
       setSubmitting(false);
     }

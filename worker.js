@@ -34,14 +34,14 @@ export default {
     // CORS headers
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     };
 
     // Handle preflight OPTIONS requests
     if (method === 'OPTIONS') {
       return new Response(null, {
-        status: 200,
+        status: 204,
         headers: corsHeaders,
       });
     }
@@ -391,6 +391,51 @@ export default {
         });
       } catch (error) {
         return json({ success: false, message: 'Internal server error while updating survey' }, 500);
+      }
+    }
+
+    // PATCH /api/surveys/:id/status - Update survey published status only
+    const statusMatch = pathname.match(/^\/api\/surveys\/([^\/]+)\/status$/);
+    if (method === 'PATCH' && statusMatch) {
+      const surveyId = statusMatch[1];
+      try {
+        const statusData = await parseBody(request);
+        
+        // Validate request body
+        if (!statusData) {
+          return json({ success: false, message: 'Request body is required' }, 400);
+        }
+        
+        if (typeof statusData.published !== 'boolean') {
+          return json({ success: false, message: 'published field must be a boolean value' }, 400);
+        }
+        
+        // Check if survey exists
+        const { results } = await DB.prepare('SELECT * FROM surveys WHERE id = ?').bind(surveyId).all();
+        if (!results.length) {
+          return json({ success: false, message: 'Survey not found' }, 404);
+        }
+        
+        // Update only the submitted field
+        await DB.prepare(
+          'UPDATE surveys SET submitted = ?, updatedAt = ? WHERE id = ?'
+        ).bind(
+          statusData.published ? 1 : 0,
+          new Date().toISOString(),
+          surveyId
+        ).run();
+        
+        return json({
+          success: true,
+          message: `Survey ${statusData.published ? 'published' : 'unpublished'} successfully`,
+          data: {
+            id: surveyId,
+            published: statusData.published
+          },
+        });
+      } catch (error) {
+        console.error('Error updating survey status:', error);
+        return json({ success: false, message: 'Internal server error while updating survey status' }, 500);
       }
     }
 

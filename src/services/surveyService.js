@@ -97,6 +97,14 @@ export const surveyService = {
     });
   },
 
+  // Update survey published status
+  async updateSurveyStatus(surveyId, published) {
+    return apiRequest(`/api/surveys/${surveyId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ published }),
+    });
+  },
+
   // Health check
   async healthCheck() {
     return apiRequest('/api/health');

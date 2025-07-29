@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import surveyService from '../services/surveyService';
 import './SurveyPreview.css';
 
@@ -45,12 +46,12 @@ const SurveyPreview = () => {
 
     try {
       await surveyService.updateSurvey(surveyId, surveyData);
-      alert('Survey saved as draft successfully!');
+      toast.success('Survey saved as draft successfully!');
       // Navigate back to dashboard to see updated status
       navigate('/');
     } catch (error) {
       console.error('Network error:', error);
-      alert(`Error saving survey: ${error.message}`);
+      toast.error(`Error saving survey: ${error.message}`);
     }
   };
 
@@ -75,12 +76,12 @@ const SurveyPreview = () => {
       // Then mark as submitted
       await surveyService.submitSurvey(surveyId);
 
-      alert('Survey submitted successfully!');
+      toast.success('Survey submitted successfully!');
       // Navigate back to dashboard to see updated status
       navigate('/');
     } catch (error) {
       console.error('Network error:', error);
-      alert(`Error submitting survey: ${error.message}`);
+      toast.error(`Error submitting survey: ${error.message}`);
     }
   };
 

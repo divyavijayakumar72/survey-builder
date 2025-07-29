@@ -399,6 +399,15 @@
   color: #dc3545;
 }
 
+.publish-item {
+  color: #6f42c1;
+}
+
+.publish-item:hover {
+  background-color: #f3e8ff;
+  color: #5a2d82;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;

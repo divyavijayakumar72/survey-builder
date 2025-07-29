@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import SurveyDashboard from './components/SurveyDashboard';
 import CreateSurvey from './components/CreateSurvey';
 import SurveyPreview from './components/SurveyPreview';
@@ -20,6 +22,17 @@ function App() {
           <Route path="/responses/survey/:surveyId" element={<ResponsesDashboard />} />
           <Route path="/responses/recipient/:recipientName" element={<RecipientDetails />} />
         </Routes>
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     </Router>
   );
