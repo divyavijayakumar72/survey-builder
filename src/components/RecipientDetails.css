@@ -181,11 +181,11 @@
 }
 
 .answer-box {
-  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
-  border: 1px solid #c084fc;
+  background: transparent;
+  border: none;
   border-radius: 8px;
-  padding: 1rem;
-  color: #581c87;
+  padding: 0;
+  color: #374151;
   font-size: 1rem;
   line-height: 1.6;
   word-wrap: break-word;
@@ -205,17 +205,24 @@
   gap: 0.75rem;
   padding: 0.75rem;
   border-radius: 6px;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  opacity: 0.7;
 }
 
 .choice-item.selected {
   background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
-  border: 1px solid #c084fc;
+  border: 2px solid #8b5cf6;
+  opacity: 1;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+  transform: translateY(-1px);
 }
 
 .choice-item.not-selected {
-  background-color: transparent;
-  border: none;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  opacity: 0.7;
 }
 
 .choice-indicator {
@@ -228,28 +235,31 @@
   font-size: 14px;
   font-weight: bold;
   flex-shrink: 0;
+  transition: all 0.2s ease;
 }
 
 .choice-item.selected .choice-indicator {
   background-color: #8b5cf6;
   color: white;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
 }
 
 .choice-item.not-selected .choice-indicator {
   background-color: #d1d5db;
-  color: #6b7280;
+  color: #9ca3af;
 }
 
 .choice-text {
   font-size: 1rem;
   line-height: 1.4;
-  color: #374151;
+  color: #6b7280;
   flex: 1;
+  transition: all 0.2s ease;
 }
 
 .choice-item.selected .choice-text {
   color: #581c87;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* Action Buttons */
