@@ -135,11 +135,12 @@ const SurveyDashboard = () => {
 
   const handleCopyLink = async (e, survey) => {
     e.stopPropagation();
+    // You can modify this to include a parameter for the new version
     const surveyLink = `${window.location.origin}/take/${survey.id}`;
     
     try {
       await navigator.clipboard.writeText(surveyLink);
-      toast.success('Survey link copied to clipboard!');
+      toast.success('SurveyJS survey link copied to clipboard!');
     } catch (err) {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
@@ -148,7 +149,7 @@ const SurveyDashboard = () => {
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-      toast.success('Survey link copied to clipboard!');
+      toast.success('SurveyJS survey link copied to clipboard!');
     }
     
     setOpenMenuId(null);

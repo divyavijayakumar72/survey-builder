@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SurveyDashboard from './components/SurveyDashboard';
-import CreateSurvey from './components/CreateSurvey';
+import SurveyCreatorWrapper from './components/SurveyCreator';
 import SurveyPreview from './components/SurveyPreview';
-import TakeSurvey from './components/TakeSurvey';
+import TakeSurveyJS from './components/TakeSurveyJS';
 import ResponsesDashboard from './components/ResponsesDashboard';
 import RecipientDetails from './components/RecipientDetails';
 import './App.css';
@@ -15,9 +15,10 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<SurveyDashboard />} />
-          <Route path="/create" element={<CreateSurvey />} />
+          <Route path="/create" element={<SurveyCreatorWrapper />} />
+          <Route path="/create/:surveyId" element={<SurveyCreatorWrapper />} />
           <Route path="/survey/:surveyId" element={<SurveyPreview />} />
-          <Route path="/take/:surveyId" element={<TakeSurvey />} />
+          <Route path="/take/:surveyId" element={<TakeSurveyJS />} />
           <Route path="/responses" element={<ResponsesDashboard />} />
           <Route path="/responses/survey/:surveyId" element={<ResponsesDashboard />} />
           <Route path="/responses/recipient/:recipientName" element={<RecipientDetails />} />

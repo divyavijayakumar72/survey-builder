@@ -1,0 +1,451 @@
+/* Main Container - Full screen with centered content */
+.take-survey-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Survey Card Container */
+.survey-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 800px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Survey Header */
+.survey-header {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  padding: 40px 40px 30px 40px;
+  text-align: center;
+  position: relative;
+}
+
+.survey-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #e74c3c, #f39c12, #f1c40f, #27ae60, #3498db);
+}
+
+.survey-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.survey-header p {
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+/* Survey Content */
+.survey-content {
+  padding: 40px;
+  background: white;
+}
+
+/* SurveyJS Wrapper */
+.surveyjs-wrapper {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* SurveyJS Container Styles */
+.survey-content .sv-root-modern {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  font-family: inherit !important;
+}
+
+/* SurveyJS Question Styles */
+.sv-root-modern .sv-question {
+  margin-bottom: 40px !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+.sv-root-modern .sv-question__title {
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  color: #2c3e50 !important;
+  margin-bottom: 20px !important;
+  line-height: 1.4 !important;
+  word-wrap: normal !important;
+  white-space: normal !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+/* SurveyJS Input Styles */
+.sv-root-modern .sv-question__input {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.sv-root-modern .sv-text__input,
+.sv-root-modern .sv-comment__input {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 16px 20px !important;
+  border: 2px solid #e1e5e9 !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  font-family: inherit !important;
+  line-height: 1.5 !important;
+  transition: all 0.3s ease !important;
+  background: #fafbfc !important;
+}
+
+.sv-root-modern .sv-text__input:focus,
+.sv-root-modern .sv-comment__input:focus {
+  outline: none !important;
+  border-color: #3498db !important;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1) !important;
+  background: white !important;
+}
+
+/* SurveyJS Radio and Checkbox Styles */
+.sv-root-modern .sv-radio,
+.sv-root-modern .sv-checkbox {
+  margin-bottom: 16px !important;
+  width: 100% !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.sv-root-modern .sv-radio:hover,
+.sv-root-modern .sv-checkbox:hover {
+  background-color: #f8f9fa !important;
+}
+
+.sv-root-modern .sv-radio__label,
+.sv-root-modern .sv-checkbox__label {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  color: #2c3e50 !important;
+  word-wrap: normal !important;
+  white-space: normal !important;
+  width: 100% !important;
+  font-weight: 500 !important;
+}
+
+/* SurveyJS Button Styles */
+.sv-root-modern .sv-btn {
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  padding: 14px 28px !important;
+  min-width: 140px !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+}
+
+.sv-root-modern .sv-btn--primary {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3) !important;
+}
+
+.sv-root-modern .sv-btn--primary:hover {
+  background: linear-gradient(135deg, #2980b9 0%, #1f5f8b 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4) !important;
+}
+
+/* SurveyJS Progress Bar */
+.sv-root-modern .sv-progress {
+  margin-bottom: 40px !important;
+  width: 100% !important;
+}
+
+.sv-root-modern .sv-progress__bar {
+  background-color: #e1e5e9 !important;
+  border-radius: 12px !important;
+  height: 8px !important;
+  overflow: hidden !important;
+}
+
+.sv-root-modern .sv-progress__bar--filled {
+  background: linear-gradient(90deg, #3498db, #2980b9) !important;
+  border-radius: 12px !important;
+  transition: width 0.3s ease !important;
+}
+
+/* SurveyJS Navigation */
+.sv-root-modern .sv-nav {
+  margin-top: 40px !important;
+  display: flex !important;
+  justify-content: center !important;
+  gap: 20px !important;
+  padding: 0 !important;
+}
+
+/* SurveyJS Page Title - Hide it since we have our own header */
+.sv-root-modern .sv-page__title {
+  display: none !important;
+}
+
+/* SurveyJS Page Description */
+.sv-root-modern .sv-page__description {
+  font-size: 18px !important;
+  color: #7f8c8d !important;
+  margin-bottom: 40px !important;
+  text-align: center !important;
+  line-height: 1.6 !important;
+  width: 100% !important;
+  font-weight: 400 !important;
+}
+
+/* Fix for text wrapping issues */
+.sv-root-modern * {
+  word-wrap: normal !important;
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+}
+
+/* Ensure proper container width */
+.sv-root-modern .sv-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+}
+
+/* Hide pagination navigation indicator */
+.sv-root-modern .sv-paneldynamic__progress {
+  display: none !important;
+}
+
+/* Hide page navigation dots/circles */
+.sv-root-modern .sv-page__navigation {
+  display: none !important;
+}
+
+/* Hide any other pagination elements */
+.sv-root-modern .sv-pagination {
+  display: none !important;
+}
+
+/* Name Entry Styles */
+.name-entry {
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 60px 40px;
+}
+
+.name-entry h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.name-entry p {
+  color: #7f8c8d;
+  margin-bottom: 40px;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+.name-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.name-input {
+  padding: 16px 20px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+  font-family: inherit;
+}
+
+.name-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  background: white;
+}
+
+/* Button Styles */
+.btn {
+  padding: 16px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #2980b9 0%, #1f5f8b 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+}
+
+/* Loading, Error, and Thank You States */
+.loading-state,
+.error-state,
+.thank-you-state {
+  text-align: center;
+  padding: 80px 40px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+}
+
+.loading-state h2,
+.error-state h2,
+.thank-you-state h2 {
+  color: #2c3e50;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+
+.loading-state p,
+.error-state p,
+.thank-you-state p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 30px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Submitting Overlay */
+.submitting-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.submitting-overlay .spinner {
+  margin-bottom: 20px;
+}
+
+.submitting-overlay p {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .take-survey-container {
+    padding: 15px;
+  }
+  
+  .survey-card {
+    border-radius: 12px;
+  }
+  
+  .survey-header {
+    padding: 30px 20px 25px 20px;
+  }
+  
+  .survey-header h2 {
+    font-size: 2rem;
+  }
+  
+  .survey-content {
+    padding: 30px 20px;
+  }
+  
+  .name-entry {
+    padding: 40px 20px;
+  }
+  
+  .name-entry h2 {
+    font-size: 2rem;
+  }
+  
+  .sv-root-modern .sv-question__title {
+    font-size: 22px !important;
+  }
+  
+  .sv-root-modern .sv-btn {
+    padding: 12px 24px !important;
+    min-width: 120px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .survey-header h2 {
+    font-size: 1.8rem;
+  }
+  
+  .name-entry h2 {
+    font-size: 1.8rem;
+  }
+  
+  .sv-root-modern .sv-nav {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+} 

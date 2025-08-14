@@ -161,12 +161,7 @@ const SurveyPreview = () => {
         <button onClick={() => navigate('/')} className="btn btn-secondary">
           Back to Dashboard
         </button>
-        <button onClick={() => navigate('/create', { 
-          state: { 
-            editMode: true, 
-            surveyData: survey 
-          } 
-        })} className="btn btn-warning">
+        <button onClick={() => navigate(`/create/${surveyId}`)} className="btn btn-warning">
           Edit Survey
         </button>
       </div>
